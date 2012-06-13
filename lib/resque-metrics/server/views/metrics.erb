@@ -1,22 +1,24 @@
 <h1>All your metrics are belong to Resque</h1>
 
 <table class="queues">
-  <tbody>
+    <tbody>
     <tr>
-      <th>Queue</th>
-      <th>Jobs completed</th>
-      <th>Avg. Job Time</th>
-      <th>Number of workers</th>
-      <th>ETA</th>
+        <th>Queue</th>
+        <th>Jobs completed</th>
+        <th>Avg. Job Time</th>
+        <th>Jobs Left</th>
+        <th>Number of workers</th>
+        <th>ETA</th>
     </tr>
 
     <% resque.queues.each do |queue| %>
-      <td class="queue"><a href="<%=u "queues/#{queue}" %>"><%= queue %></a></td>
-      <td class="size"><%= Resque::Metrics.total_job_count_by_queue(queue) %></td>
-      <td class="size"><%= metrics_formatted_ms(Resque::Metrics.avg_job_time_by_queue(queue)) %></td>
-      <td class="size"><%= Resque.workers.count %></td>
-      <td class="size"><%= Resque::Metrics.avg_job_time_by_queue(queue)/Resque.workers.count %></td>
+        <td class="queue"><a href="<%= u "queues/#{queue}" %>"><%= queue %></a></td>
+        <td class="size"><%= Resque::Metrics.total_job_count_by_queue(queue) %></td>
+        <td class="size"><%= metrics_formatted_ms(Resque::Metrics.avg_job_time_by_queue(queue)) %></td>
+        <td class="size"><%= Resque.size queue %></td>
+        <td class="size"><%= Resque.workers.count %></td>
+        <td class="size"><%= metrics_formatted_ms((Resque.size(queue) * Resque::Metrics.avg_job_time_by_queue(queue))/Resque.workers.count) %></td>
     <% end %>
 
-  </tbody>
+    </tbody>
 </table>
